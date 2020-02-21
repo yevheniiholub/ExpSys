@@ -88,7 +88,6 @@ void		CheckForValid(std::string sSrc)
 			iCount++;
 		else {
 			std::cout << "Syntax error!" << std::endl;
-			std::cout << sSrc[iCount] << "\"" <<sSrc[iCount] << "\"" << std::endl;
 			exit(0);
 		}
 	}
@@ -112,6 +111,6 @@ std::vector<std::string>		ParseInfo(std::string sInput)
 
 	vInput = SplitString(sInput);
 	vInput = RemoveComents(vInput);
-	//CheckValidVec(vInput);
+	CheckValidVec(vInput);
 	return vInput;
 }
