@@ -1,5 +1,33 @@
 #include "MainHeader.hpp"
 
+void            showRes(ExpSysClass infoClass)
+{
+    uint16_t iCountStr;
+    uint16_t iCountVec;
+
+    iCountStr = 0;
+    iCountVec = 0;
+    while (iCountStr < infoClass.getQue().length())
+    {
+        while (iCountVec < infoClass.getMembers().size())
+        {
+            if (infoClass.getMembers()[iCountVec].getName() == infoClass.getQue()[iCountStr])
+            {
+                std::cout << "Member \"" << infoClass.getQue()[iCountStr] << "\" is ";
+                if (infoClass.getMembers()[iCountVec].getIsTrue() && infoClass.getMembers()[iCountVec].getFact())
+                    std::cout << "true!" << std::endl;
+                else if (infoClass.getMembers()[iCountVec].getIsTrue() && infoClass.getMembers()[iCountVec].getFact())
+                    std::cout << "ambiguous..." << std::endl;
+                else
+                    std::cout << "false!" << std::endl;
+
+            }
+            iCountVec++;
+        }
+        iCountStr++;
+    }
+}
+
 static uint16_t checkFacts(std::vector<MemberClass> members, std::string instruction)
 {
     uint16_t iCountStr;
@@ -124,9 +152,9 @@ uint16_t	changeInfo(ExpSysClass inputInfo, uint16_t rev, uint16_t index)
             if (sRes[iCountStr - 1] != '!')
             {
                 if (sRes[iCountStr - 1] == '|' || sRes[iCountStr + 1] == '|' || sRes[iCountStr - 1] == '^' || sRes[iCountStr + 1] == '^' || FactRes)
-                    iResult = changeMember(1, 1, sRes[iCountStr], inputInfo);
+                    iResult += changeMember(1, 1, sRes[iCountStr], inputInfo);
                 else
-                    iResult = changeMember(0, 1, sRes[iCountStr], inputInfo);
+                    iResult += changeMember(0, 1, sRes[iCountStr], inputInfo);
             }
         }
         if (sRes[iCountStr - 1] == '!')
@@ -137,6 +165,7 @@ uint16_t	changeInfo(ExpSysClass inputInfo, uint16_t rev, uint16_t index)
                 exit (0);
             }
         }
+        iCountStr++;
     }
     return (iResult);
 }
@@ -227,6 +256,7 @@ uint16_t	isTrue(uint16_t status, uint16_t rec, std::vector<MemberClass> members,
         else
             if (iCountStr - 1 < 0 && !getMemberStatus(instruction[iCountStr + 1], members))
                 status = 1;
+        iCountStr++;
     }
     return status;
 }
@@ -254,8 +284,11 @@ void						solver(ExpSysClass inputInfo)
                 if (isTrue(0, 0, inputInfo.getMembers(), inputInfo.getInstCond()[iCount]))
 					iBreak = changeInfo(inputInfo, 0, iCount);
 			}
+            iCount++;
 		}
+        std::cout << "herddde" << std::endl;
         if (!iBreak)
             break ;
 	}
+    showRes(inputInfo);
 }

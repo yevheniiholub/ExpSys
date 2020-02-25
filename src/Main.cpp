@@ -27,5 +27,6 @@ int		main(int iArgc, char **sArgv)
 		sInput = ReadInfoFromFile(sArgv[1]);				// read file in string
 		vInput = ParseInfo(sInput);							// parsing
 		expClass = writeInfo(vInput);
+		solver(expClass);
 	}
 }

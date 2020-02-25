@@ -11,5 +11,6 @@
 std::string 				ReadInfoFromFile(std::string sFileName);
 std::vector<std::string>	ParseInfo(std::string sInput);
 ExpSysClass					writeInfo(std::vector<std::string> sInputInfo);
+void						solver(ExpSysClass inputInfo);
 
 #endif

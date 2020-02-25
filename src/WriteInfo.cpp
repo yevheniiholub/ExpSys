@@ -54,7 +54,6 @@ int						CheckProcessedString(std::string sInput)
 	uint16_t iCount;
 
 	iCount = 0;
-	std::cout << sInput << std::endl;
 	while (iCount < sInput.length())
 	{
 		if ((sInput[iCount] >= 'A' && sInput[iCount] <= 'Z') ||
