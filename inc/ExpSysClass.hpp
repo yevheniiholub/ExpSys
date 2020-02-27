@@ -27,6 +27,9 @@ class ExpSysClass
         void					    setOnlyIf(std::vector<uint16_t> v);
         void					    setMembers(std::vector<MemberClass> v);
         void					    addMember(MemberClass newMember);
+        void                        changeMemberStatus(uint16_t iCount, uint16_t iStatus);
+        void                        changeMemberFact(uint16_t iCount, uint16_t iFact);
+
     private:
         std::string					_que;
         std::string					_facts;

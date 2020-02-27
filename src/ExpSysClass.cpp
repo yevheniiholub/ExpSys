@@ -75,3 +75,13 @@ void						ExpSysClass::addMember(MemberClass newMember)
     _members.push_back(newMember);
 }
 
+
+void                        ExpSysClass::changeMemberStatus(uint16_t iCount, uint16_t iStatus)
+{
+    _members[iCount].setIsTrue(iStatus);
+}
+
+void                        ExpSysClass::changeMemberFact(uint16_t iCount, uint16_t iFact)
+{
+    _members[iCount].setFact(iFact);
+}

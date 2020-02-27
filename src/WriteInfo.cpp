@@ -32,8 +32,8 @@ void					writeMembers(ExpSysClass *infoClass)
 	{
 		iCountStr = -1;
 		while (++iCountStr < infoClass->getInstCond()[iCountVec].length())
-			if (infoClass->getInstCond()[iCountVec][iCountStr] <= 'A' &&
-				infoClass->getInstCond()[iCountVec][iCountStr] >= 'Z')
+			if (infoClass->getInstCond()[iCountVec][iCountStr] >= 'A' &&
+				infoClass->getInstCond()[iCountVec][iCountStr] <= 'Z')
 				if (isUniqueMem(infoClass->getMembers(), infoClass->getInstCond()[iCountVec][iCountStr]))
 					infoClass->addMember(MemberClass(infoClass->getInstCond()[iCountVec][iCountStr], 0, 0));
 	}
@@ -42,8 +42,8 @@ void					writeMembers(ExpSysClass *infoClass)
 	{
 		iCountStr = -1;
 		while (++iCountStr < infoClass->getInstRes()[iCountVec].length())
-			if (infoClass->getInstRes()[iCountVec][iCountStr] <= 'A' &&
-				infoClass->getInstRes()[iCountVec][iCountStr] >= 'Z')
+			if (infoClass->getInstRes()[iCountVec][iCountStr] >= 'A' &&
+				infoClass->getInstRes()[iCountVec][iCountStr] <= 'Z')
 				if (isUniqueMem(infoClass->getMembers(), infoClass->getInstRes()[iCountVec][iCountStr]))
 					infoClass->addMember(MemberClass(infoClass->getInstRes()[iCountVec][iCountStr], 0, 0));
 	}
@@ -133,23 +133,6 @@ void					sortInfo(std::string *que, std::string *fac, std::vector<std::string> *
 		else
 			inst->push_back(sInputInfo[iCountVec]);
 		iCountVec++;
-	}
-	if (que->length() == 0)
-	{
-		std::cout << "No querie is detected!" << std::endl;
-		exit (0);
-	}
-
-	if (fac->length() == 0)
-	{
-		std::cout << "No facts is detected!" << std::endl;
-		exit (0);
-	}
-
-	if (inst->size() == 0)
-	{
-		std::cout << "No inctrustions is detected!" << std::endl;
-		exit (0);
 	}
 }
 

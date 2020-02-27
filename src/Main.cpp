@@ -14,6 +14,7 @@ void	printClass(ExpSysClass cl)
 		std::cout << "name : " << cl.getMembers()[iCount].getName() << " status : " << cl.getMembers()[iCount].getIsTrue() << " fact: " << cl.getMembers()[iCount].getFact() << std::endl;
 		iCount++;
 	}
+	std::cout << cl.getMembers().size() << std::endl;
 }
 
 int		main(int iArgc, char **sArgv)
@@ -27,6 +28,6 @@ int		main(int iArgc, char **sArgv)
 		sInput = ReadInfoFromFile(sArgv[1]);				// read file in string
 		vInput = ParseInfo(sInput);							// parsing
 		expClass = writeInfo(vInput);
-		solver(expClass);
+		solver(&expClass);
 	}
 }

@@ -6,15 +6,16 @@ void            showRes(ExpSysClass infoClass)
     uint16_t iCountVec;
 
     iCountStr = 0;
-    iCountVec = 0;
     while (iCountStr < infoClass.getQue().length())
     {
+        iCountVec = 0;
         while (iCountVec < infoClass.getMembers().size())
         {
+
             if (infoClass.getMembers()[iCountVec].getName() == infoClass.getQue()[iCountStr])
             {
                 std::cout << "Member \"" << infoClass.getQue()[iCountStr] << "\" is ";
-                if (infoClass.getMembers()[iCountVec].getIsTrue() && infoClass.getMembers()[iCountVec].getFact())
+                if (infoClass.getMembers()[iCountVec].getIsTrue() && !infoClass.getMembers()[iCountVec].getFact())
                     std::cout << "true!" << std::endl;
                 else if (infoClass.getMembers()[iCountVec].getIsTrue() && infoClass.getMembers()[iCountVec].getFact())
                     std::cout << "ambiguous..." << std::endl;
@@ -51,7 +52,7 @@ static uint16_t checkFacts(std::vector<MemberClass> members, std::string instruc
     return (0);
 }
 
-static uint16_t isInLine(std::string instruction)
+uint16_t      isInLine(std::string instruction)
 {
     uint16_t iCountStr;
     uint16_t iCountCol;
@@ -101,21 +102,21 @@ uint16_t    getMemberFact(uint8_t name, std::vector<MemberClass> members)
     return 0;
 }
 
-uint16_t    changeMember(uint16_t fact, uint16_t stat, uint8_t name, ExpSysClass infoClass)
+uint16_t    changeMember(uint16_t fact, uint16_t stat, uint8_t name, ExpSysClass *infoClass)
 {
     uint16_t iCountVec;
 
     iCountVec = 0;
-    while (iCountVec < infoClass.getMembers().size())
+    while (iCountVec < infoClass->getMembers().size())
     {
-        if (infoClass.getMembers()[iCountVec].getName() == name)
+        if (infoClass->getMembers()[iCountVec].getName() == name)
         {
-            if (infoClass.getMembers()[iCountVec].getIsTrue() == stat)
+            if (infoClass->getMembers()[iCountVec].getIsTrue() == stat)
                 return (0);
             else
             {
-                infoClass.getMembers()[iCountVec].setFact(fact);
-                infoClass.getMembers()[iCountVec].setIsTrue(stat);
+                infoClass->changeMemberFact(iCountVec, fact);
+                infoClass->changeMemberStatus(iCountVec, stat);
                 return (1);
             }
         }
@@ -124,7 +125,7 @@ uint16_t    changeMember(uint16_t fact, uint16_t stat, uint8_t name, ExpSysClass
     return (0);
 }
 
-uint16_t	changeInfo(ExpSysClass inputInfo, uint16_t rev, uint16_t index)
+uint16_t	changeInfo(ExpSysClass *inputInfo, uint16_t rev, uint16_t index)
 {
     std::string sCond;
     std::string sRes;
@@ -136,15 +137,15 @@ uint16_t	changeInfo(ExpSysClass inputInfo, uint16_t rev, uint16_t index)
     iResult = 0;
     if (rev)
     {
-        sCond = inputInfo.getInstRes()[index];
-        sRes = inputInfo.getInstCond()[index];
+        sCond = inputInfo->getInstRes()[index];
+        sRes = inputInfo->getInstCond()[index];
     }
     else
     {
-        sCond = inputInfo.getInstCond()[index];
-        sRes = inputInfo.getInstRes()[index];
+        sCond = inputInfo->getInstCond()[index];
+        sRes = inputInfo->getInstRes()[index];
     }
-    FactRes = checkFacts(inputInfo.getMembers(), sCond);
+    FactRes = checkFacts(inputInfo->getMembers(), sCond);
     while (iCountStr < sRes.length())
     {
         if (sRes[iCountStr] >= 'A' && sRes[iCountStr] <= 'Z')
@@ -159,7 +160,7 @@ uint16_t	changeInfo(ExpSysClass inputInfo, uint16_t rev, uint16_t index)
         }
         if (sRes[iCountStr - 1] == '!')
         {
-            if (getMemberStatus(sRes[iCountStr], inputInfo.getMembers()))
+            if (getMemberStatus(sRes[iCountStr], inputInfo->getMembers()))
             {
                 std::cout << "Contradiction error" << std::endl;
                 exit (0);
@@ -170,125 +171,56 @@ uint16_t	changeInfo(ExpSysClass inputInfo, uint16_t rev, uint16_t index)
     return (iResult);
 }
 
-uint16_t	isTrue(uint16_t status, uint16_t rec, std::vector<MemberClass> members, std::string instruction)
+void                        printStatus(ExpSysClass *inputInfo)
 {
-    uint16_t iCountStr;
-    uint16_t iActive;
-    uint16_t iNeg;
+    uint16_t iCountStr = 0;
+    uint16_t iCountVec = inputInfo->getMembers().size() - 1;
 
-    iCountStr = 0;
-    iActive = 0;
-    iNeg = 0;
-    while (iCountStr < instruction.length())
+    printf("\n|Name|Status|Fact|\n------------------\n");
+    while (iCountVec > 0)
     {
-        if (instruction[iCountStr] >= 'A' && instruction[iCountStr] <= 'Z')
-        {
-            if (getMemberStatus(instruction[iCountStr], members) && instruction[iCountStr - 1] != '+' && instruction[iCountStr - 1] != '^', instruction[iCountStr - 1] != '!')
-                status = 1;
-            if (getMemberFact(instruction[iCountStr], members))
-                status = 1;
-        }
-        else if (instruction[iCountStr] == '|')
-        {
-            if (!status)
-            {
-                if (instruction[iCountStr + 1] >= 'A' && instruction[iCountStr + 1] <= 'Z')
-                {
-                    if (getMemberStatus(instruction[iCountStr + 1], members))
-                        status = 1;
-                }
-                else
-                {
-                    if (getMemberStatus(instruction[iCountStr + 2], members))
-                        status = 1;
-                }
-            }
-            else
-                iActive++;
-            if (iActive && !rec && isInLine(instruction))
-                return (1);
-        }
-        else if (instruction[iCountStr] == '+')
-        {
-            if (status)
-            {
-                if (getMemberStatus(instruction[iCountStr + 2], members) && instruction[iCountStr + 1] == '!')
-                    status = 0;
-                if (instruction[iCountStr + 1] >= 'A' && instruction[iCountStr + 1] <= 'Z')
-                    if (getMemberStatus(instruction[iCountStr + 1], members))
-                        status = 0;
-            }
-            else
-                status = 0;
-        }
-        else if (instruction[iCountStr] == '^')
-        {
-            if (status)
-            {
-                if (instruction[iCountStr + 1] != '!' && !getMemberStatus(instruction[iCountStr + 2], members))
-                    status = 0;
-                if (getMemberStatus(instruction[iCountStr + 1], members) && !getMemberFact(instruction[iCountStr + 1], members))
-                    status = 0;
-            }
-            else
-            {
-                if (instruction[iCountStr + 1] != '!' && !getMemberStatus(instruction[iCountStr + 2], members))
-                    status = 1;
-                if (getMemberStatus(instruction[iCountStr + 1], members))
-                    status = 1;
-            }
-        }
-        else if (instruction[iCountStr] == ')' || instruction[iCountStr] == '(')
-        {
-            if (instruction[iCountStr] == '(')
-            {
-                if (instruction[iCountStr - 1] == '!')
-                    iNeg = 1;
-                status = isTrue(status, 1, members, instruction.substr(iCountStr + 1, (instruction.length() + 1 - iCountStr)));
-                while (iCountStr < instruction.length() && instruction[iCountStr] != ')')
-                    iCountStr++;
-                if (status && iNeg)
-                    status = 0;
-                else if (!status && iNeg)
-                    status = 1;
-            }
-        }
-        else
-            if (iCountStr - 1 < 0 && !getMemberStatus(instruction[iCountStr + 1], members))
-                status = 1;
+        printf("|\"%c\" |  %i   | %i  |\n", inputInfo->getMembers()[iCountVec].getName(), inputInfo->getMembers()[iCountVec].getIsTrue(), inputInfo->getMembers()[iCountVec].getFact());
+        iCountVec--;
+    }
+    printf("------------------\n---Instructions---\n");
+    while (iCountStr < inputInfo->getInstCond().size())
+    {
+        printf("%s => %s | if and only if %i\n", inputInfo->getInstCond()[iCountStr].c_str(), inputInfo->getInstRes()[iCountStr].c_str(), inputInfo->getOnlyIf()[iCountStr]);
         iCountStr++;
     }
-    return status;
 }
 
-void						solver(ExpSysClass inputInfo)
+void						solver(ExpSysClass *inputInfo)
 {
 	uint16_t	iCount;
 	uint16_t	iBreak;
+    //int test = 0;
 
 	while (true)
 	{
 		iCount = 0;
 		iBreak = 0;
-		while (iCount < inputInfo.getInstCond().size())
+		while (iCount < inputInfo->getInstCond().size())
 		{
-			if (!inputInfo.getOnlyIf()[iCount])
+			if (!inputInfo->getOnlyIf()[iCount])
 			{
-				if (isTrue(0, 0, inputInfo.getMembers(), inputInfo.getInstCond()[iCount]))
+				if (isTrue(0, 0, inputInfo->getMembers(), inputInfo->getInstCond()[iCount]))
 					iBreak = changeInfo(inputInfo, 0, iCount);
 			}
 			else
 			{
-                if (isTrue(0, 0, inputInfo.getMembers(), inputInfo.getInstRes()[iCount]))
+                if (isTrue(0, 0, inputInfo->getMembers(), inputInfo->getInstRes()[iCount]))
 					iBreak = changeInfo(inputInfo, 1, iCount);
-                if (isTrue(0, 0, inputInfo.getMembers(), inputInfo.getInstCond()[iCount]))
+                if (isTrue(0, 0, inputInfo->getMembers(), inputInfo->getInstCond()[iCount]))
 					iBreak = changeInfo(inputInfo, 0, iCount);
 			}
             iCount++;
-		}
-        std::cout << "herddde" << std::endl;
+	    }
         if (!iBreak)
             break ;
+        // test++;
 	}
-    showRes(inputInfo);
+    printStatus(inputInfo);
+    showRes(*inputInfo);
+    exit(iBreak);
 }
