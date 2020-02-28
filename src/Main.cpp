@@ -1,20 +1,24 @@
 #include "MainHeader.hpp"
 
-void	printClass(ExpSysClass cl)
+void	showUsage()
 {
-	uint16_t iCount = 0;
-	while (iCount < cl.getInstCond().size())
-	{
-		std::cout << cl.getInstCond()[iCount] << " " << cl.getOnlyIf()[iCount] << " " << cl.getInstRes()[iCount] << std::endl;
-		iCount++;
-	}
-	iCount = 0;
-	while (iCount < cl.getMembers().size())
-	{
-		std::cout << "name : " << cl.getMembers()[iCount].getName() << " status : " << cl.getMembers()[iCount].getIsTrue() << " fact: " << cl.getMembers()[iCount].getFact() << std::endl;
-		iCount++;
-	}
-	std::cout << cl.getMembers().size() << std::endl;
+	printf("/************** expert_system usage: ******************/\n");
+	printf("/                                                      /\n");
+	printf("/ ./expert_system [filename] [flags]                   /\n");
+	printf("/                                                      /\n");
+	printf("/----------------------/FLAGS/-------------------------/\n");
+	printf("/ -d     debug mode                                    /\n");
+	printf("/ -s     standart input mode                           /\n");
+	printf("/ -w     output in file                                /\n");
+	printf("/ -f     iteractive fact validation                    /\n");
+	printf("/******************************************************/\n");
+}
+
+uint16_t		checkBreak(ExpSysClass *inputInfo)
+{
+	if (!inputInfo->getFFlag())
+		return (1);
+	return (0);
 }
 
 int		main(int iArgc, char **sArgv)
@@ -22,12 +26,25 @@ int		main(int iArgc, char **sArgv)
 	std::string 				sInput;
 	std::vector<std::string>	vInput;
 	ExpSysClass 				expClass;
+	uint16_t					iBreak;
 
-	if (iArgc == 2)
+	iBreak = 0;
+	if (iArgc == 1)
+		showUsage();
+	else
 	{
-		sInput = ReadInfoFromFile(sArgv[1]);				// read file in string
-		vInput = ParseInfo(sInput);							// parsing
+		printf ("Flag stat -d %i -s %i -w %i -f %i\n", expClass.getDFlag(), expClass.getSFlag(), expClass.getWFlag(), expClass.getFFlag());
+		sInput = resolveFlags(&expClass, sArgv);
+		vInput = ParseInfo(sInput);
 		expClass = writeInfo(vInput);
-		solver(&expClass);
+		printf ("Flag stat -d %i -s %i -w %i -f %i\n", expClass.getDFlag(), expClass.getSFlag(), expClass.getWFlag(), expClass.getFFlag());
+		// while (1)
+		// {
+		// 	solver(&expClass);
+		// 	iBreak = checkBreak(&expClass);
+		// 	if (iBreak)
+		// 		break ;
+		// }
 	}
 }
+	

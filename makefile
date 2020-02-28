@@ -6,7 +6,8 @@ SRC = Main.cpp\
 	  MemberClass.cpp\
 	  Solver.cpp\
 	  WriteInfo.cpp\
-	  CheckExpression.cpp
+	  CheckExpression.cpp\
+	  BonusPart.cpp
 
 
 OBJ		= $(addprefix $(OBJDIR),$(SRC:.cpp=.o))

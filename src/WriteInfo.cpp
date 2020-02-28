@@ -64,7 +64,6 @@ int						CheckProcessedString(std::string sInput)
 			iCount++;
 		else
 		{
-			std::cout << "\"" << sInput[iCount] << "\"" << std::endl;
 			std::cout << "instruction error!" << std::endl;
 			exit(0);
 		}

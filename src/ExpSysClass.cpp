@@ -2,7 +2,10 @@
 
 ExpSysClass::ExpSysClass()
 {
-
+    _dFlag = 0;
+    _wFlag = 0;
+    _fFlag = 0;
+    _sFlag = 0;
 }
 
 ExpSysClass::~ExpSysClass()
@@ -39,6 +42,47 @@ std::vector<MemberClass>	ExpSysClass::getMembers(void)
 {
     return _members;
 }
+
+uint16_t                    ExpSysClass::getDFlag(void)
+{
+    return _dFlag;
+}
+
+uint16_t                    ExpSysClass::getWFlag(void)
+{
+    return _wFlag;
+}
+
+uint16_t                    ExpSysClass::getFFlag(void)
+{
+    return _fFlag;
+}
+
+uint16_t                    ExpSysClass::getSFlag(void)
+{
+    return _sFlag;
+}
+
+void                        ExpSysClass::setDFlag(uint16_t nFlag)
+{
+    _dFlag = nFlag;
+}
+
+void                        ExpSysClass::setWFlag(uint16_t nFlag)
+{
+    _wFlag = nFlag;
+}
+
+void                        ExpSysClass::setFFlag(uint16_t nFlag)
+{
+    _fFlag = nFlag;
+}
+
+void                        ExpSysClass::setSFlag(uint16_t nFlag)
+{
+    _sFlag = nFlag;
+}
+
 
 void						ExpSysClass::setQue(std::string s)
 {

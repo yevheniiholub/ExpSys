@@ -1,6 +1,7 @@
 #ifndef MAINHEADER
 # define MAINHEADER
 
+# include <cstring>
 # include <iostream>
 # include <fstream>
 # include <string>
@@ -16,5 +17,6 @@ uint16_t	                isTrue(uint16_t status, uint16_t rec, std::vector<Membe
 uint16_t                    getMemberStatus(uint8_t name, std::vector<MemberClass> members);
 uint16_t                    getMemberFact(uint8_t name, std::vector<MemberClass> members);
 uint16_t                    isInLine(std::string instruction);
+std::string                 resolveFlags(ExpSysClass *infoClass, char **argv);
 
 #endif

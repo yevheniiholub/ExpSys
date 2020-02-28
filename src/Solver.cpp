@@ -194,33 +194,24 @@ void						solver(ExpSysClass *inputInfo)
 {
 	uint16_t	iCount;
 	uint16_t	iBreak;
-    //int test = 0;
 
-	while (true)
-	{
-		iCount = 0;
-		iBreak = 0;
-		while (iCount < inputInfo->getInstCond().size())
-		{
-			if (!inputInfo->getOnlyIf()[iCount])
-			{
-				if (isTrue(0, 0, inputInfo->getMembers(), inputInfo->getInstCond()[iCount]))
-					iBreak = changeInfo(inputInfo, 0, iCount);
-			}
-			else
-			{
-                if (isTrue(0, 0, inputInfo->getMembers(), inputInfo->getInstRes()[iCount]))
-					iBreak = changeInfo(inputInfo, 1, iCount);
-                if (isTrue(0, 0, inputInfo->getMembers(), inputInfo->getInstCond()[iCount]))
-					iBreak = changeInfo(inputInfo, 0, iCount);
-			}
-            iCount++;
-	    }
-        if (!iBreak)
-            break ;
-        // test++;
-	}
-    printStatus(inputInfo);
+    iCount = 0;
+    iBreak = 0;
+    while (iCount < inputInfo->getInstCond().size())
+    {
+        if (!inputInfo->getOnlyIf()[iCount])
+        {
+            if (isTrue(0, 0, inputInfo->getMembers(), inputInfo->getInstCond()[iCount]))
+                iBreak = changeInfo(inputInfo, 0, iCount);
+        }
+        else
+        {
+            if (isTrue(0, 0, inputInfo->getMembers(), inputInfo->getInstRes()[iCount]))
+                iBreak = changeInfo(inputInfo, 1, iCount);
+            if (isTrue(0, 0, inputInfo->getMembers(), inputInfo->getInstCond()[iCount]))
+                iBreak = changeInfo(inputInfo, 0, iCount);
+        }
+        iCount++;
+    }
     showRes(*inputInfo);
-    exit(iBreak);
 }
