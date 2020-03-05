@@ -72,7 +72,15 @@ std::string            getInput(uint16_t sFlag, std::string filename)
     return (res);
 }
 
-std::string            resolveFlags(ExpSysClass *infoClass, char **argv)
+void                   init_flags(t_flags *fFlags)
+{
+    fFlags->fD = 0;
+    fFlags->fF = 0;
+    fFlags->fS = 0;
+    fFlags->fW = 0;
+}
+
+std::string            resolveFlags(t_flags *fBonuses, char **argv)
 {
     uint16_t        iCountArr;
     std::string     fileName;
@@ -80,16 +88,17 @@ std::string            resolveFlags(ExpSysClass *infoClass, char **argv)
 
     iCountArr = 1;
     fileName.clear();
+    init_flags(fBonuses);
     while (argv[iCountArr])
     {
-        if (!strcmp(argv[iCountArr], "-d") && !infoClass->getDFlag())
-            infoClass->setDFlag(1);
-        else if (!strcmp(argv[iCountArr], "-s") && !infoClass->getSFlag())
-            infoClass->setSFlag(1);
-        else if (!strcmp(argv[iCountArr], "-w") && !infoClass->getWFlag())
-            infoClass->setWFlag(1);
-        else if (!strcmp(argv[iCountArr], "-f") && !infoClass->getFFlag())
-            infoClass->setFFlag(1);
+        if (!strcmp(argv[iCountArr], "-d") && !fBonuses->fD)
+            fBonuses->fD = 1;
+        else if (!strcmp(argv[iCountArr], "-s") && !fBonuses->fS)
+            fBonuses->fS = 1;
+        else if (!strcmp(argv[iCountArr], "-w") && !fBonuses->fW)
+            fBonuses->fW = 1;
+        else if (!strcmp(argv[iCountArr], "-f") && !fBonuses->fF)
+            fBonuses->fF = 1;
         else
         {
             if (fileName.empty())
@@ -103,6 +112,6 @@ std::string            resolveFlags(ExpSysClass *infoClass, char **argv)
         }
         iCountArr++;
     }
-    res = getInput(infoClass->getSFlag(), fileName);
+    res = getInput(fBonuses->fS, fileName);
     return (res);
 }

@@ -20,14 +20,7 @@ class ExpSysClass
         std::vector<std::string>    getInstRes(void);
         std::vector<uint16_t>	    getOnlyIf(void);
         std::vector<MemberClass>    getMembers(void);
-        uint16_t                    getDFlag(void);
-        uint16_t                    getWFlag(void);
-        uint16_t                    getFFlag(void);
-        uint16_t                    getSFlag(void);
-        void                        setDFlag(uint16_t nFlag);
-        void                        setWFlag(uint16_t nFlag);
-        void                        setFFlag(uint16_t nFlag);
-        void                        setSFlag(uint16_t nFlag);
+        void                        clearMembers(void);
         void					    setQue(std::string s);
         void					    setFacts(std::string s);
         void					    setInstCond(std::vector<std::string> v);
@@ -45,10 +38,6 @@ class ExpSysClass
         std::vector<MemberClass>	_members;
         std::vector<std::string>	_instCond;
         std::vector<std::string>	_instRes;
-        uint16_t                    _dFlag;
-        uint16_t                    _wFlag;
-        uint16_t                    _fFlag;
-        uint16_t                    _sFlag;
 };
 
 #endif

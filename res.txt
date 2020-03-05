@@ -1,8 +1,4 @@
-A+B=>C
-A+B=>C
-A+B=>C
-A+B=>C
-A+B=>C
-
-=AB
-?C
+A + B => C
+C |Z => R
+= 
+? R

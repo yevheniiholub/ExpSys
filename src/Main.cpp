@@ -14,37 +14,56 @@ void	showUsage()
 	printf("/******************************************************/\n");
 }
 
-uint16_t		checkBreak(ExpSysClass *inputInfo)
+void		checkBreak(t_flags *fBonuses, ExpSysClass *expClass)
 {
-	if (!inputInfo->getFFlag())
-		return (1);
-	return (0);
+    std::string buff;
+	uint16_t	iCount;
+
+	iCount = 0;
+	std::cout << "Enter new facts (A-Z) or \"exit\": ";
+    std::getline(std::cin, buff);
+	if (!buff.find("exit"))
+		fBonuses->fF = 0;
+	else
+	{
+		while (iCount < buff.length())
+		{
+			if (!isAlpha(buff[iCount]))
+			{
+				std::cout << "Invalind fact name!" << std::endl;
+				exit (1);
+			}
+			iCount++;
+		}
+		expClass->setFacts(buff);
+		expClass->clearMembers();
+		writeMembers(expClass);
+	}
 }
 
 int		main(int iArgc, char **sArgv)
 {
+	t_flags						fBonuses;
 	std::string 				sInput;
 	std::vector<std::string>	vInput;
 	ExpSysClass 				expClass;
-	uint16_t					iBreak;
 
-	iBreak = 0;
 	if (iArgc == 1)
 		showUsage();
 	else
 	{
-		printf ("Flag stat -d %i -s %i -w %i -f %i\n", expClass.getDFlag(), expClass.getSFlag(), expClass.getWFlag(), expClass.getFFlag());
-		sInput = resolveFlags(&expClass, sArgv);
+		sInput = resolveFlags(&fBonuses, sArgv);
 		vInput = ParseInfo(sInput);
 		expClass = writeInfo(vInput);
-		printf ("Flag stat -d %i -s %i -w %i -f %i\n", expClass.getDFlag(), expClass.getSFlag(), expClass.getWFlag(), expClass.getFFlag());
-		// while (1)
-		// {
-		// 	solver(&expClass);
-		// 	iBreak = checkBreak(&expClass);
-		// 	if (iBreak)
-		// 		break ;
-		// }
+		while (1)
+		{
+			solver(&expClass);
+			if (!fBonuses.fF)
+		 		break ;
+			checkBreak(&fBonuses, &expClass);
+			if (!fBonuses.fF)
+		 		break ;
+		}
 	}
 }
 	
