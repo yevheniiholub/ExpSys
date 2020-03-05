@@ -1,5 +1,21 @@
 #include "MainHeader.hpp"
 
+void        showTrueFacts(std::vector<MemberClass> members)
+{
+    uint16_t iCountVec;
+
+    iCountVec = 0;
+    std::cout << "Members that is true now :";
+
+    while (iCountVec < members.size())
+    {
+        if (members[iCountVec].getIsTrue())
+            std::cout << " " << members[iCountVec].getName();
+        iCountVec++;
+    }
+    std::cout << std::endl;;
+}
+
 void        alphaCharCase(std::string inst, uint16_t iCount, std::vector<MemberClass> members, uint16_t *status)
 {
     if (getMemberStatus(inst[iCount], members) && inst[iCount - 1] != '+' && inst[iCount - 1] != '^' && inst[iCount - 1] != '!')
@@ -52,7 +68,7 @@ void        xorCharCase(std::string instruction, uint16_t iCountStr, std::vector
     }
 }
 
-uint16_t	isTrue(uint16_t status, uint16_t rec, std::vector<MemberClass> members, std::string instruction)
+uint16_t	isTrue(uint16_t status, uint16_t rec, std::vector<MemberClass> members, std::string instruction, t_flags fBonuses)
 {
     uint16_t iCountStr;
     uint16_t iActive;
@@ -61,6 +77,11 @@ uint16_t	isTrue(uint16_t status, uint16_t rec, std::vector<MemberClass> members,
     iCountStr = 0;
     iActive = 0;
     iNeg = 0;
+    if (!rec && fBonuses.fD)
+    {
+        showTrueFacts(members);
+        std::cout << "Checking condition " << instruction << std::endl;
+    }
     while (iCountStr < instruction.length())
     {
         if (instruction[iCountStr] == '|')
@@ -78,7 +99,7 @@ uint16_t	isTrue(uint16_t status, uint16_t rec, std::vector<MemberClass> members,
             {
                 if (instruction[iCountStr - 1] == '!')
                     iNeg = 1;
-                status = isTrue(status, 1, members, instruction.substr(iCountStr + 1, (instruction.length() + 1 - iCountStr)));
+                status = isTrue(status, 1, members, instruction.substr(iCountStr + 1, (instruction.length() + 1 - iCountStr)), fBonuses);
                 while (iCountStr < instruction.length() && instruction[iCountStr] != ')')
                     iCountStr++;
                 if (status && iNeg)
@@ -97,6 +118,13 @@ uint16_t	isTrue(uint16_t status, uint16_t rec, std::vector<MemberClass> members,
             if (iCountStr - 1 < 0 && !getMemberStatus(instruction[iCountStr + 1], members))
                 status = 1;
         iCountStr++;
+    }
+    if (!rec && fBonuses.fD)
+    {
+        if (status)
+            std::cout << "Condition \"" << instruction << "\" is true!" << std::endl;
+        else
+            std::cout << "Condition \"" << instruction << "\" is false!" << std::endl;
     }
     return status;
 }

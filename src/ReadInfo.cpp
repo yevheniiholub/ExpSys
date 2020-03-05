@@ -35,12 +35,11 @@ std::string	ReadInfoFromFile(std::string sFileName)
 	std::ifstream	ifsFile(sFileName);
 	std::string		sResult;
 
-	if (!ifsFile)
+	if (ifsFile.fail())
 	{
 		std::cout << "Cannot open file :" << sFileName << "!" << std::endl;
 		exit (0);
 	}
-
 	while (std::getline(ifsFile, sBuff)){
 		sResult += sBuff + "\n";
 	}

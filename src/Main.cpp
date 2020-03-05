@@ -57,7 +57,7 @@ int		main(int iArgc, char **sArgv)
 		expClass = writeInfo(vInput);
 		while (1)
 		{
-			solver(&expClass);
+			solver(&expClass, fBonuses);
 			if (!fBonuses.fF)
 		 		break ;
 			checkBreak(&fBonuses, &expClass);

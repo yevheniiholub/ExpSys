@@ -1,9 +1,11 @@
 #include "MainHeader.hpp"
 
-void            showRes(ExpSysClass infoClass)
+void            showRes(ExpSysClass infoClass, t_flags fBonuses)
 {
-    uint16_t iCountStr;
-    uint16_t iCountVec;
+    uint16_t        iCountStr;
+    uint16_t        iCountVec;
+    std::string     sRes;
+    std::ofstream   fileOut("output_expSys.txt");
 
     iCountStr = 0;
     while (iCountStr < infoClass.getQue().length())
@@ -14,19 +16,36 @@ void            showRes(ExpSysClass infoClass)
 
             if (infoClass.getMembers()[iCountVec].getName() == infoClass.getQue()[iCountStr])
             {
-                std::cout << "Member \"" << infoClass.getQue()[iCountStr] << "\" is ";
+                sRes += "Member \"";
+                sRes.push_back(infoClass.getQue()[iCountStr]);
+                sRes += "\" is ";
                 if (infoClass.getMembers()[iCountVec].getIsTrue() && !infoClass.getMembers()[iCountVec].getFact())
-                    std::cout << "true!" << std::endl;
+                    sRes += "true!\n";
                 else if (infoClass.getMembers()[iCountVec].getIsTrue() && infoClass.getMembers()[iCountVec].getFact())
-                    std::cout << "ambiguous..." << std::endl;
+                    sRes += "ambiguous...\n";
                 else
-                    std::cout << "false!" << std::endl;
+                    sRes += "false!\n";
 
             }
             iCountVec++;
         }
         iCountStr++;
     }
+    if (fBonuses.fW)
+    {
+        if (fileOut.fail())
+        {
+            std::cout << "Error creating file! :(" << std::endl;
+            exit(1);
+        }
+        else
+        {
+            fileOut << sRes;
+            fileOut.close();
+        }
+    }
+    else
+        std::cout << sRes; 
 }
 
 static uint16_t checkFacts(std::vector<MemberClass> members, std::string instruction)
@@ -102,7 +121,7 @@ uint16_t    getMemberFact(uint8_t name, std::vector<MemberClass> members)
     return 0;
 }
 
-uint16_t    changeMember(uint16_t fact, uint16_t stat, uint8_t name, ExpSysClass *infoClass)
+uint16_t    changeMember(uint16_t fact, uint16_t stat, uint8_t name, ExpSysClass *infoClass, t_flags fBonuses)
 {
     uint16_t iCountVec;
 
@@ -115,6 +134,14 @@ uint16_t    changeMember(uint16_t fact, uint16_t stat, uint8_t name, ExpSysClass
                 return (0);
             else
             {
+                if (fBonuses.fD)
+                {
+                    std::cout << "Now member : " << infoClass->getMembers()[iCountVec].getName();
+                    if (fact)
+                        std::cout << " is ambigious!" << std::endl;
+                    else
+                        std::cout << " is true!" << std::endl;
+                }
                 infoClass->changeMemberFact(iCountVec, fact);
                 infoClass->changeMemberStatus(iCountVec, stat);
                 return (1);
@@ -125,7 +152,7 @@ uint16_t    changeMember(uint16_t fact, uint16_t stat, uint8_t name, ExpSysClass
     return (0);
 }
 
-uint16_t	changeInfo(ExpSysClass *inputInfo, uint16_t rev, uint16_t index)
+uint16_t	changeInfo(ExpSysClass *inputInfo, uint16_t rev, uint16_t index, t_flags fBonuses)
 {
     std::string sCond;
     std::string sRes;
@@ -153,9 +180,9 @@ uint16_t	changeInfo(ExpSysClass *inputInfo, uint16_t rev, uint16_t index)
             if (sRes[iCountStr - 1] != '!')
             {
                 if (sRes[iCountStr - 1] == '|' || sRes[iCountStr + 1] == '|' || sRes[iCountStr - 1] == '^' || sRes[iCountStr + 1] == '^' || FactRes)
-                    iResult += changeMember(1, 1, sRes[iCountStr], inputInfo);
+                    iResult += changeMember(1, 1, sRes[iCountStr], inputInfo, fBonuses);
                 else
-                    iResult += changeMember(0, 1, sRes[iCountStr], inputInfo);
+                    iResult += changeMember(0, 1, sRes[iCountStr], inputInfo, fBonuses);
             }
         }
         if (sRes[iCountStr - 1] == '!')
@@ -171,26 +198,7 @@ uint16_t	changeInfo(ExpSysClass *inputInfo, uint16_t rev, uint16_t index)
     return (iResult);
 }
 
-void                        printStatus(ExpSysClass *inputInfo)
-{
-    uint16_t iCountStr = 0;
-    uint16_t iCountVec = inputInfo->getMembers().size() - 1;
-
-    printf("\n|Name|Status|Fact|\n------------------\n");
-    while (iCountVec > 0)
-    {
-        printf("|\"%c\" |  %i   | %i  |\n", inputInfo->getMembers()[iCountVec].getName(), inputInfo->getMembers()[iCountVec].getIsTrue(), inputInfo->getMembers()[iCountVec].getFact());
-        iCountVec--;
-    }
-    printf("------------------\n---Instructions---\n");
-    while (iCountStr < inputInfo->getInstCond().size())
-    {
-        printf("%s => %s | if and only if %i\n", inputInfo->getInstCond()[iCountStr].c_str(), inputInfo->getInstRes()[iCountStr].c_str(), inputInfo->getOnlyIf()[iCountStr]);
-        iCountStr++;
-    }
-}
-
-void						solver(ExpSysClass *inputInfo)
+void						solver(ExpSysClass *inputInfo, t_flags fBonuses)
 {
 	uint16_t	iCount;
 	uint16_t	iBreak;
@@ -199,19 +207,25 @@ void						solver(ExpSysClass *inputInfo)
     iBreak = 0;
     while (iCount < inputInfo->getInstCond().size())
     {
+        if (fBonuses.fD)
+            std::cout << "\nNow consider instruction \"" << inputInfo->getInstCond()[iCount] << "\" and consequence \"" << inputInfo->getInstRes()[iCount] << "\" ";
         if (!inputInfo->getOnlyIf()[iCount])
         {
-            if (isTrue(0, 0, inputInfo->getMembers(), inputInfo->getInstCond()[iCount]))
-                iBreak = changeInfo(inputInfo, 0, iCount);
+            if (fBonuses.fD)
+                std::cout << "With simple implementation condition" << std::endl;
+            if (isTrue(0, 0, inputInfo->getMembers(), inputInfo->getInstCond()[iCount], fBonuses))
+                iBreak = changeInfo(inputInfo, 0, iCount, fBonuses);
         }
         else
         {
-            if (isTrue(0, 0, inputInfo->getMembers(), inputInfo->getInstRes()[iCount]))
-                iBreak = changeInfo(inputInfo, 1, iCount);
-            if (isTrue(0, 0, inputInfo->getMembers(), inputInfo->getInstCond()[iCount]))
-                iBreak = changeInfo(inputInfo, 0, iCount);
+            if (fBonuses.fD)
+                std::cout << "With \"if and only if\" implementation condition" << std::endl;
+            if (isTrue(0, 0, inputInfo->getMembers(), inputInfo->getInstRes()[iCount], fBonuses))
+                iBreak = changeInfo(inputInfo, 1, iCount, fBonuses);
+            if (isTrue(0, 0, inputInfo->getMembers(), inputInfo->getInstCond()[iCount], fBonuses))
+                iBreak = changeInfo(inputInfo, 0, iCount, fBonuses);
         }
         iCount++;
     }
-    showRes(*inputInfo);
+    showRes(*inputInfo, fBonuses);
 }
