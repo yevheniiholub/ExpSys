@@ -48,7 +48,7 @@ void            showRes(ExpSysClass infoClass, t_flags fBonuses)
         std::cout << sRes; 
 }
 
-static uint16_t checkFacts(std::vector<MemberClass> members, std::string instruction)
+uint16_t checkFacts(std::vector<MemberClass> members, std::string instruction)
 {
     uint16_t iCountStr;
     uint16_t iCountVec;
@@ -121,7 +121,7 @@ uint16_t    getMemberFact(uint8_t name, std::vector<MemberClass> members)
     return 0;
 }
 
-uint16_t    changeMember(uint16_t fact, uint16_t stat, uint8_t name, ExpSysClass *infoClass, t_flags fBonuses)
+void    changeMember(uint16_t fact, uint16_t stat, uint8_t name, ExpSysClass *infoClass, t_flags fBonuses)
 {
     uint16_t iCountVec;
 
@@ -131,7 +131,7 @@ uint16_t    changeMember(uint16_t fact, uint16_t stat, uint8_t name, ExpSysClass
         if (infoClass->getMembers()[iCountVec].getName() == name)
         {
             if (infoClass->getMembers()[iCountVec].getIsTrue() == stat)
-                return (0);
+                return ;
             else
             {
                 if (fBonuses.fD)
@@ -144,24 +144,21 @@ uint16_t    changeMember(uint16_t fact, uint16_t stat, uint8_t name, ExpSysClass
                 }
                 infoClass->changeMemberFact(iCountVec, fact);
                 infoClass->changeMemberStatus(iCountVec, stat);
-                return (1);
+                return ;
             }
         }
         iCountVec++;
     }
-    return (0);
 }
 
-uint16_t	changeInfo(ExpSysClass *inputInfo, uint16_t rev, uint16_t index, t_flags fBonuses)
+void	changeInfo(ExpSysClass *inputInfo, uint16_t rev, uint16_t index, t_flags fBonuses)
 {
     std::string sCond;
     std::string sRes;
     uint16_t    FactRes;
     uint16_t    iCountStr;
-    uint16_t    iResult;
 
     iCountStr = 0;
-    iResult = 0;
     if (rev)
     {
         sCond = inputInfo->getInstRes()[index];
@@ -180,9 +177,9 @@ uint16_t	changeInfo(ExpSysClass *inputInfo, uint16_t rev, uint16_t index, t_flag
             if (sRes[iCountStr - 1] != '!')
             {
                 if (sRes[iCountStr - 1] == '|' || sRes[iCountStr + 1] == '|' || sRes[iCountStr - 1] == '^' || sRes[iCountStr + 1] == '^' || FactRes)
-                    iResult += changeMember(1, 1, sRes[iCountStr], inputInfo, fBonuses);
+                    changeMember(1, 1, sRes[iCountStr], inputInfo, fBonuses);
                 else
-                    iResult += changeMember(0, 1, sRes[iCountStr], inputInfo, fBonuses);
+                    changeMember(0, 1, sRes[iCountStr], inputInfo, fBonuses);
             }
         }
         if (sRes[iCountStr - 1] == '!')
@@ -195,7 +192,6 @@ uint16_t	changeInfo(ExpSysClass *inputInfo, uint16_t rev, uint16_t index, t_flag
         }
         iCountStr++;
     }
-    return (iResult);
 }
 
 void						solver(ExpSysClass *inputInfo, t_flags fBonuses)
@@ -214,16 +210,16 @@ void						solver(ExpSysClass *inputInfo, t_flags fBonuses)
             if (fBonuses.fD)
                 std::cout << "With simple implementation condition" << std::endl;
             if (isTrue(0, 0, inputInfo->getMembers(), inputInfo->getInstCond()[iCount], fBonuses))
-                iBreak = changeInfo(inputInfo, 0, iCount, fBonuses);
+                changeInfo(inputInfo, 0, iCount, fBonuses);
         }
         else
         {
             if (fBonuses.fD)
                 std::cout << "With \"if and only if\" implementation condition" << std::endl;
             if (isTrue(0, 0, inputInfo->getMembers(), inputInfo->getInstRes()[iCount], fBonuses))
-                iBreak = changeInfo(inputInfo, 1, iCount, fBonuses);
+                changeInfo(inputInfo, 1, iCount, fBonuses);
             if (isTrue(0, 0, inputInfo->getMembers(), inputInfo->getInstCond()[iCount], fBonuses))
-                iBreak = changeInfo(inputInfo, 0, iCount, fBonuses);
+                changeInfo(inputInfo, 0, iCount, fBonuses);
         }
         iCount++;
     }
